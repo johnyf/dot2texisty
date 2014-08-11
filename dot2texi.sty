@@ -307,6 +307,27 @@
             {Please convert \dtt@figname.dot manually}}
 }
 
+\newcommand{\includetikz}[1]{%
+	% only if \usetikzlibrary{external}
+	\ifdefined\tikzsetnextfilename%
+		\noexpandarg\expandafter\StrSubstitute\expandafter{#1}{.tex}{}[\z]%
+		%
+		% save "prefix" of tikz library "external"
+		% this avoids prefixing the "outputdir" of dot2texi
+		\let\oldtikzexternal@filenameprefix=\tikzexternal@filenameprefix%
+		\tikzsetexternalprefix{}% clear "prefix"
+		%
+		\tikzsetnextfilename{\z}%
+	\fi%
+	%
+	\input{#1}%
+	%
+	% restore "prefix" of tikz library "external"
+	\ifdefined\tikzsetnextfilename%
+		\tikzsetexternalprefix{\oldtikzexternal@filenameprefix}%
+	\fi%
+}
+
 \newcommand\includedot[2][]{%
 	\noexpandarg%
 	\expandafter\StrSubstitute\expandafter{#2}{./}{_}[\x]%
