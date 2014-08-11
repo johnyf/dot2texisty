@@ -192,6 +192,9 @@
 
 \define@key{dtt}{shell}[]{\dtt@ShellEscapetrue}
 \define@key{dtt}{noshell}[]{\dtt@ShellEscapefalse}
+
+\define@boolkey{dtt}{samepath}[true]{}%
+
 % graph layout
 \define@key{dtt}{dot}[]{\def\dtt@procprog{--prog=dot}}
 \define@key{dtt}{neato}[]{\def\dtt@procprog{--prog=neato}}
@@ -329,12 +332,21 @@
 }
 
 \newcommand\includedot[2][]{%
-	\noexpandarg%
-	\expandafter\StrSubstitute\expandafter{#2}{./}{_}[\x]%
-	\expandafter\StrSubstitute\expandafter{\x}{/}{_}[\x]%
-	\expandafter\StrSubstitute\expandafter{\x}{.dot}{.tex}[\x]%
-	%
 	\setkeys{dtt}{#1}{%
+		\ifKV@dtt@samepath%
+			\noexpandarg%
+			\expandafter\StrSubstitute\expandafter{#2}{.dot}{}[\x]%
+			%
+			\def\dtt@tikzfile{\x.tex}%
+		\else%
+			\noexpandarg%
+			\expandafter\StrSubstitute\expandafter{#2}{./}{_}[\x]%
+			\expandafter\StrSubstitute\expandafter{\x}{/}{_}[\x]%
+			\expandafter\StrSubstitute\expandafter{\x}{.dot}{}[\x]%
+			%
+			\def\dtt@tikzfile{\dtt@outputdir/\x.tex}%
+		\fi%
+		%
 		\ifdtt@ShellEscape%
 			\immediate\write18{
 				dot2tex
@@ -349,12 +361,13 @@
 					\dtt@mathmode\space
 					\dtt@graphstyle\space
 					\dtt@force\space
-					-o \dtt@outputdir/\x
+					-o \dtt@tikzfile
 					\dtt@options\space #2
 			}%
 		\fi%
-		\input{\dtt@outputdir/\x}%
-	}
+		%
+		\includetikz{\dtt@tikzfile}%
+	}%
 }%
 
 \endinput
