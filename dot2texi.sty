@@ -313,7 +313,6 @@
 	\expandafter\StrSubstitute\expandafter{\x}{/}{_}[\x]%
 	\expandafter\StrSubstitute\expandafter{\x}{.dot}{.tex}[\x]%
 	%
-	\def\dtt@fname{\dtt@outputdir\pathtofname{#2}}%
 	\setkeys{dtt}{#1}{%
 		\ifdtt@ShellEscape%
 			\immediate\write18{
